@@ -17,14 +17,17 @@ export default class NewBill {
   }
   handleChangeFile = e => {
     e.preventDefault()
+    const fileDOM = this.document.querySelector('input[data-testid="file"]')
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
-    let fileExtension = fileName.split('.').pop();
+    let fileExtension = fileName.split('.').pop().toLowerCase();
     let extensionAllowed = ['jpg', 'png', 'jpeg'];
     if(!extensionAllowed.includes(fileExtension)){
-      return alert('Le format ' + fileExtension + ' n\'est pas accepté, merci d\'ajouté un fichier de type JPG / PNG / JPEG');
+      fileDOM.setAttribute('data-isCorrectFormat', false)
+      return alert('Le format ' + fileExtension + ' n\'est pas accepté, merci d\'ajouter un fichier de type JPG / PNG / JPEG');
     }
+    fileDOM.setAttribute('data-iscorrectformat', true)
     const formData = new FormData()
     const email = JSON.parse(localStorage.getItem("user")).email
     formData.append('file', file)
@@ -47,6 +50,11 @@ export default class NewBill {
   }
   handleSubmit = e => {
     e.preventDefault()
+    const fileDOM = this.document.querySelector('input[data-testid="file"]')
+    let correctFormat = fileDOM.getAttribute('data-iscorrectformat')
+    if(correctFormat === 'false'){
+      return alert('Merci de renseigner un justificatif dans un format correct.');
+    }
     console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
     const email = JSON.parse(localStorage.getItem("user")).email
     const bill = {
