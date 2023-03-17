@@ -18,16 +18,16 @@ export default class NewBill {
   handleChangeFile = e => {
     e.preventDefault()
     const fileDOM = this.document.querySelector('input[data-testid="file"]')
-    const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
+    const file = this.document.querySelector('input[data-testid="file"]').files[0]
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
     let fileExtension = fileName.split('.').pop().toLowerCase();
     let extensionAllowed = ['jpg', 'png', 'jpeg'];
     if(!extensionAllowed.includes(fileExtension)){
-      fileDOM.setAttribute('data-correct-format', false)
+      fileDOM.setAttribute('data-correct-format', 'false')
       return alert('Le format ' + fileExtension + ' n\'est pas accepté, merci d\'ajouter un fichier de type JPG / PNG / JPEG');
     }
-    fileDOM.setAttribute('data-correct-format', true)
+    fileDOM.setAttribute('data-correct-format', 'true')
     const formData = new FormData()
     const email = JSON.parse(localStorage.getItem("user")).email
     formData.append('file', file)
