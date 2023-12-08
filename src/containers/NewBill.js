@@ -17,43 +17,40 @@ export default class NewBill {
   }
   handleChangeFile = e => {
     e.preventDefault()
-    const fileDOM = this.document.querySelector('input[data-testid="file"]')
     const file = this.document.querySelector('input[data-testid="file"]').files[0]
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
     let fileExtension = fileName.split('.').pop().toLowerCase();
     let extensionAllowed = ['jpg', 'png', 'jpeg'];
-    if(!extensionAllowed.includes(fileExtension)){
-      fileDOM.setAttribute('data-correct-format', 'false')
-      return alert('Le format ' + fileExtension + ' n\'est pas accepté, merci d\'ajouter un fichier de type JPG / PNG / JPEG');
-    }
-    fileDOM.setAttribute('data-correct-format', 'true')
     const formData = new FormData()
     const email = JSON.parse(localStorage.getItem("user")).email
-    formData.append('file', file)
     formData.append('email', email)
 
-    this.store
-      .bills()
-      .create({
-        data: formData,
-        headers: {
-          noContentType: true
-        }
-      })
-      .then(({fileUrl, key}) => {
-        console.log(fileUrl)
-        this.billId = key
-        this.fileUrl = fileUrl
-        this.fileName = fileName
-      }).catch(error => console.error(error))
+    if(extensionAllowed.includes(fileExtension)){
+      formData.append('file', file)
+      
+      this.store
+        .bills()
+        .create({
+          data: formData,
+          headers: {
+            noContentType: true
+          }
+        })
+        .then(({fileUrl, key}) => {
+          this.billId = key
+          this.fileUrl = fileUrl
+          this.fileName = fileName
+        }).catch(error => console.error(error))
+    }
+    else{
+      return alert('Le format ' + fileExtension + ' n\'est pas accepté, merci d\'ajouter un fichier de type JPG / PNG / JPEG');
+    }
   }
   handleSubmit = e => {
     e.preventDefault()
-    const fileDOM = this.document.querySelector('input[data-testid="file"]')
-    let correctFormat = fileDOM.getAttribute('data-correct-format')
-    if(correctFormat === 'false'){
-      return alert('Merci de renseigner un justificatif dans un format correct.');
+    if(this.fileName == null){
+      return alert ('Le format de votre document n\'est pas accepté, merci d\'ajouter un fichier de type JPG / PNG / JPEG');
     }
     console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
     const email = JSON.parse(localStorage.getItem("user")).email
